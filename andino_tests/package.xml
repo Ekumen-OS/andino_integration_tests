@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>andino_tests</name>
+  <version>1.0.0</version>
+  <description>Andino System Tests</description>
+
+  <maintainer email="ag.albachicar@ekumenlabs.com">Agustin Dario Alba Chicar</maintainer>
+  <maintainer email="eloy.briceno@ekumenlabs.com">Eloy Briceno</maintainer>
+  <maintainer email="eabramzon@ekumenlabs.com">Enrique Gabriel Abramzon</maintainer>
+  <maintainer email="erasmo.montes@ekumenlabs.com">Erasmo Montes</maintainer>
+  <maintainer email="fabricio@ekumenlabs.com">Fabricio Emder</maintainer>
+  <maintainer email="franco.c@ekumenlabs.com">Franco Cipollone</maintainer>
+  <maintainer email="gonzalodepedro@ekumenlabs.com">Gonzalo de Pedro</maintainer>
+  <maintainer email="olmerg@ekumenlabs.com">Olmer Garcia</maintainer>
+  <maintainer email="santiaupi@ekumenlabs.com">Santiago Aupi</maintainer>
+
+  <author email="ag.albachicar@ekumenlabs.com">Agustin Dario Alba Chicar</author>
+  <author email="eloy.briceno@ekumenlabs.com">Eloy Briceno</author>
+  <author email="eabramzon@ekumenlabs.com">Enrique Gabriel Abramzon</author>
+  <author email="erasmo.montes@ekumenlabs.com">Erasmo Montes</author>
+  <author email="fabricio@ekumenlabs.com">Fabricio Emder</author>
+  <author email="franco.c@ekumenlabs.com">Franco Cipollone</author>
+  <author email="gonzalodepedro@ekumenlabs.com">Gonzalo de Pedro</author>
+  <author email="olmerg@ekumenlabs.com">Olmer Garcia</author>
+  <author email="santiaupi@ekumenlabs.com">Santiago Aupi</author>
+
+  <license>BSD Clause 3</license>
+
+  <depend>python3-psutil</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>andino_control</test_depend>
+  <test_depend>andino_gazebo</test_depend>
+  <test_depend>andino_navigation</test_depend>
+  <test_depend>angles</test_depend>
+  <test_depend>geometry_msgs</test_depend>
+  <test_depend>launch</test_depend>
+  <test_depend>launch_ros</test_depend>
+  <test_depend>launch_testing</test_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>nav_msgs</test_depend>
+  <test_depend>nav2_simple_commander</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <test_depend>sensor_msgs</test_depend>
+  <test_depend>std_msgs</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

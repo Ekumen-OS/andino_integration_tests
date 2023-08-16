@@ -1,0 +1,41 @@
+name: Remove robomaker simulations jobs
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+
+jobs:
+  remove_robomaker_simulation_jobs:
+    runs-on: ubuntu-22.04
+    name: Remove robomaker simulations jobs
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+        # set up Python dependencies
+      - name: Install Python dependencies
+        uses: py-actions/py-dependency-install@v4
+        with:
+          path: "ekumen_cloud_robotics_ci/requirements.txt"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Delete Robot, simulation, and simulation of Amazon Robomaker
+        env:
+          ROBOT_APPLICATION_ID: ${{ github.event.repository.name }}-PR-${{ github.event.number }}
+          SIMULATION_APPLICATION_ID: ${{ github.event.repository.name }}-PR-${{ github.event.number }}
+        run: |
+          python3 ekumen_cloud_robotics_ci/scripts/delete_simulation_job.py $ROBOT_APPLICATION_ID $SIMULATION_APPLICATION_ID

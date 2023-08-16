@@ -1,0 +1,95 @@
+# Copyright 2023 Ekumen, Inc.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the the copyright holder nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+name: Process simulation job results
+
+on:
+  workflow_call:
+    inputs:
+      THRESHOLD_SUCCESS:
+        required: true
+        type: string
+
+jobs:
+  process_sim_job_results:
+    runs-on: ubuntu-22.04
+    name: Process simulation job results
+    timeout-minutes: 1
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: simulation_summary
+
+      - name: Read variable
+        id: read-simulation-status
+        run: |
+          simJobStatus=FAILED
+          success_prctg=$(cat simulation_summary.txt | grep 'results:' | awk '{print $3}' | cut -d "." -f 1)
+          if (( $success_prctg >= ${{ inputs.THRESHOLD_SUCCESS }} )); then simJobStatus=SUCCEEDED; else simJobStatus=FAILED; fi
+          echo "simJobStatus=$simJobStatus" >> $GITHUB_ENV
+
+      - name: Publish test results on SUCCESS
+        if: github.event_name == 'pull_request' && env.simJobStatus == 'SUCCEEDED'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: simulation_summary.txt
+          reactions: rocket
+
+      - name: Publish test results on FAILURE
+        if: github.event_name == 'pull_request' && env.simJobStatus == 'FAILED'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: simulation_summary.txt
+          reactions: eyes
+
+      # Tag the GitHub Action according to the result of the simulation batch
+      - name: Tag this GitHub Action
+        if: env.simJobStatus == 'SUCCEEDED'
+        run: |
+          echo "Success"
+          exit 0
+
+      - name: Tag this GitHub Action
+        if: env.simJobStatus == 'ABORTED'
+        run: |
+          echo "Something went really wrong, status code: ABORTED"
+          exit 1
+
+      - name: Tag this GitHub Action
+        if: env.simJobStatus == 'FAILED'
+        run: |
+          echo "Failure"
+          exit 1
+
+      - name: Tag this GitHub Action
+        if: env.simJobStatus == 'TIMED_OUT'
+        run: |
+          echo "Timed out"
+          exit 1

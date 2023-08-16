@@ -1,0 +1,103 @@
+# Copyright 2023 Ekumen, Inc.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the the copyright holder nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+name: Build, tag, and push docker image to ECR
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY:
+        required: true
+      AWS_ECR_REPOSITORY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+
+
+jobs:
+  build_docker_image:
+    runs-on: ubuntu-22.04
+    name: Build, tag, and push docker image to ECR
+    timeout-minutes: 9
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set SHORT_SHA and IMAGE_TAG
+        id: vars
+        run: |
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG=PR-${{ github.event.number }}-$(git rev-parse --short HEAD)"-${{github.run_number}} >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        id: configure_aws_credentials
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Build, Tag and push docker image to Amazon ECR
+        id: build_tag_docker_image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.vars.outputs.IMAGE_TAG }}
+          REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
+        run: |
+          ./docker/build_ci.sh --image_name $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "SHA=$(docker images --no-trunc --quiet $REGISTRY/$REPOSITORY:$IMAGE_TAG)" >> $GITHUB_OUTPUT
+
+      - name: Comment docker image tag on the pull request
+        uses: thollander/actions-comment-pull-request@v2
+        if: github.event_name == 'pull_request'
+        with:
+          message: |
+            Your image has been successfully uploaded to the remote repository. Please see the details below.
+
+            **Tag:** ${{ steps.vars.outputs.IMAGE_TAG }}
+            **URL:** ${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}:${{ steps.vars.outputs.IMAGE_TAG }}
+            **AWS Respository URL:** [${{ steps.vars.outputs.IMAGE_TAG }}](
+              https://${{ secrets.AWS_REGION}}.console.aws.amazon.com/ecr/repositories/private/${{ steps.configure_aws_credentials.outputs.aws-account-id}}/${{ github.event.repository.name }}/_/image/${{ steps.build_tag_docker_image.outputs.SHA }}/details?region=${{ secrets.AWS_REGION}}
+            )
+          comment_tag: docker_image_tag
+
+      - name: Cancel workflow if it failed.
+        if: ${{ failure() }}
+        uses: "andymckay/cancel-action@0.3"

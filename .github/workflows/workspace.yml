@@ -1,0 +1,87 @@
+# Copyright 2023 Ekumen, Inc.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the the copyright holder nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+name: Build ros workspace
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  TERM: linux
+  PACKAGES: andino_tests
+  ROS_DISTRO: humble
+
+jobs:
+  workspace:
+    name: Build workspace, run unit and integration tests.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+
+    container:
+      image: osrf/ros:humble-desktop-full
+      env:
+        TERM: linux
+
+    steps:
+      - name: Setup headless display for Gazebo rendering in tests.
+        uses: pyvista/setup-headless-display-action@v1
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@v0.6
+      - uses: ros-tooling/action-ros-ci@v0.3
+        with:
+          package-name: ${{ env.PACKAGES }}
+          target-ros2-distro: ${{ env.ROS_DISTRO }}
+          vcs-repo-file-url: vcs_config.yaml
+          import-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-tests: true
+
+      # Run manually the tests to source gazebo environment.
+      - name: Run colcon tests providing a default environment.
+        id: run-colcon-tests
+        shell: bash
+        run: |
+          cd /__w/andino_integration_tests/andino_integration_tests/ros_ws
+          source /opt/ros/humble/setup.sh
+          source /usr/share/gazebo/setup.bash
+          source install/setup.bash
+          colcon test --event-handlers=console_direct+ --packages-select ${{ env.PACKAGES }}
+          colcon test-result --verbose
+
+      # Upload job's build and test artifacts.
+      - name: Upload the build and tests logs as an artifact.
+        if: ${{ always() }}
+        id: upload-logs-artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: build&test-logs-artifact
+            path: /__w/andino_integration_tests/andino_integration_tests/ros_ws/log/
+
+      - name: Cancel workflow if it failed.
+        if: ${{ failure() }}
+        uses: "andymckay/cancel-action@0.3"

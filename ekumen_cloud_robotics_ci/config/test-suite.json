@@ -1,0 +1,126 @@
+{
+    "json_config_test": [
+        {
+            "maxJobDurationInSeconds": 360,
+            "failureBehavior": "Fail",
+            "iamRole": " ",
+            "robotApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "streamUI": false,
+                        "environmentVariables": {
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_IP": "ROBOMAKER_ROBOT_APP_IP",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "command": [
+                            "/bin/bash"
+                        ]
+                    },
+                    "tools": []
+                }
+            ],
+            "simulationApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "environmentVariables": {
+                            "ROS_IP": "ROBOMAKER_SIM_APP_IP",
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "streamUI": true,
+                        "command": [
+                            "/bin/bash"
+                        ]
+                    },
+                    "tools": [
+                        {
+                            "streamUI": true,
+                            "name": "gzclient",
+                            "command": "gzclient",
+                            "streamOutputToCloudWatch": true,
+                            "exitBehavior": "RESTART"
+                        }
+                    ]
+                }
+            ],
+            "vpcConfig": {
+                "subnets": [],
+                "securityGroups": [],
+                "assignPublicIp": true
+            },
+            "compute": {
+                "simulationUnitLimit": 8,
+                "computeType": "CPU",
+                "gpuUnitLimit": 0
+            }
+        },
+        {
+            "maxJobDurationInSeconds": 360,
+            "failureBehavior": "Fail",
+            "iamRole": " ",
+            "robotApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "streamUI": false,
+                        "environmentVariables": {
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_IP": "ROBOMAKER_ROBOT_APP_IP",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "command": [
+                            "/bin/bash"
+                        ]
+                    },
+                    "tools": []
+                }
+            ],
+            "simulationApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "environmentVariables": {
+                            "ROS_IP": "ROBOMAKER_SIM_APP_IP",
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "streamUI": true,
+                        "command": [
+                            "/bin/bash"
+                        ]
+                    },
+                    "tools": [
+                        {
+                            "streamUI": true,
+                            "name": "gzclient",
+                            "command": "gzclient",
+                            "streamOutputToCloudWatch": true,
+                            "exitBehavior": "RESTART"
+                        }
+                    ]
+                }
+            ],
+            "vpcConfig": {
+                "subnets": [],
+                "securityGroups": [],
+                "assignPublicIp": true
+            },
+            "compute": {
+                "simulationUnitLimit": 8,
+                "computeType": "CPU",
+                "gpuUnitLimit": 0
+            }
+        }
+    ]
+}

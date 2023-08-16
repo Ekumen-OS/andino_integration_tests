@@ -1,0 +1,260 @@
+{
+    "json_config_test": [
+        {
+            "maxJobDurationInSeconds": 360,
+            "failureBehavior": "Fail",
+            "iamRole": " ",
+            "robotApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "streamUI": false,
+                        "environmentVariables": {
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_IP": "ROBOMAKER_ROBOT_APP_IP",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "command": [
+                            "echo",
+                            "robot_app"
+                        ]
+                    },
+                    "tools": []
+                }
+            ],
+            "simulationApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "environmentVariables": {
+                            "ROS_IP": "ROBOMAKER_SIM_APP_IP",
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "streamUI": true,
+                        "command": [
+                            "./src/andino_integration_tests/andino_tests/scripts/test_entrypoint.sh",
+                            "-t",
+                            "test_sensor_verification"
+                        ]
+                    },
+                    "tools": [
+                        {
+                            "streamUI": true,
+                            "name": "gzclient",
+                            "command": "gzclient",
+                            "streamOutputToCloudWatch": true,
+                            "exitBehavior": "RESTART"
+                        }
+                    ]
+                }
+            ],
+            "vpcConfig": {
+                "subnets": [],
+                "securityGroups": [],
+                "assignPublicIp": true
+            },
+            "compute": {
+                "simulationUnitLimit": 8,
+                "computeType": "CPU",
+                "gpuUnitLimit": 0
+            }
+        },
+        {
+            "maxJobDurationInSeconds": 360,
+            "failureBehavior": "Fail",
+            "iamRole": " ",
+            "robotApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "streamUI": false,
+                        "environmentVariables": {
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_IP": "ROBOMAKER_ROBOT_APP_IP",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "command": [
+                            "echo",
+                            "robot_app"
+                        ]
+                    },
+                    "tools": []
+                }
+            ],
+            "simulationApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "environmentVariables": {
+                            "ROS_IP": "ROBOMAKER_SIM_APP_IP",
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "streamUI": true,
+                        "command": [
+                            "./src/andino_integration_tests/andino_tests/scripts/test_entrypoint.sh",
+                            "-t",
+                            "test_robot_moves"
+                        ]
+                    },
+                    "tools": [
+                        {
+                            "streamUI": true,
+                            "name": "gzclient",
+                            "command": "gzclient",
+                            "streamOutputToCloudWatch": true,
+                            "exitBehavior": "RESTART"
+                        }
+                    ]
+                }
+            ],
+            "vpcConfig": {
+                "subnets": [],
+                "securityGroups": [],
+                "assignPublicIp": true
+            },
+            "compute": {
+                "simulationUnitLimit": 8,
+                "computeType": "CPU",
+                "gpuUnitLimit": 0
+            }
+        },
+        {
+            "maxJobDurationInSeconds": 360,
+            "failureBehavior": "Fail",
+            "iamRole": " ",
+            "robotApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "streamUI": false,
+                        "environmentVariables": {
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_IP": "ROBOMAKER_ROBOT_APP_IP",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "command": [
+                            "echo",
+                            "robot_app"
+                        ]
+                    },
+                    "tools": []
+                }
+            ],
+            "simulationApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "environmentVariables": {
+                            "ROS_IP": "ROBOMAKER_SIM_APP_IP",
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "streamUI": true,
+                        "command": [
+                            "./src/andino_integration_tests/andino_tests/scripts/test_entrypoint.sh",
+                            "-t",
+                            "test_set_initial_pose"
+                        ]
+                    },
+                    "tools": [
+                        {
+                            "streamUI": true,
+                            "name": "gzclient",
+                            "command": "gzclient",
+                            "streamOutputToCloudWatch": true,
+                            "exitBehavior": "RESTART"
+                        }
+                    ]
+                }
+            ],
+            "vpcConfig": {
+                "subnets": [],
+                "securityGroups": [],
+                "assignPublicIp": true
+            },
+            "compute": {
+                "simulationUnitLimit": 8,
+                "computeType": "CPU",
+                "gpuUnitLimit": 0
+            }
+        },
+        {
+            "maxJobDurationInSeconds": 360,
+            "failureBehavior": "Fail",
+            "iamRole": " ",
+            "robotApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "streamUI": false,
+                        "environmentVariables": {
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_IP": "ROBOMAKER_ROBOT_APP_IP",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "command": [
+                            "echo",
+                            "robot_app"
+                        ]
+                    },
+                    "tools": []
+                }
+            ],
+            "simulationApplications": [
+                {
+                    "application": " ",
+                    "applicationVersion": "$LATEST",
+                    "launchConfig": {
+                        "environmentVariables": {
+                            "ROS_IP": "ROBOMAKER_SIM_APP_IP",
+                            "ROS_DOMAIN_ID": "1",
+                            "ROS_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11311",
+                            "GAZEBO_MASTER_URI": "http://ROBOMAKER_SIM_APP_IP:11345"
+                        },
+                        "streamUI": true,
+                        "command": [
+                            "./src/andino_integration_tests/andino_tests/scripts/test_entrypoint.sh",
+                            "-t",
+                            "test_set_move_to_pose"
+                        ]
+                    },
+                    "tools": [
+                        {
+                            "streamUI": true,
+                            "name": "gzclient",
+                            "command": "gzclient",
+                            "streamOutputToCloudWatch": true,
+                            "exitBehavior": "RESTART"
+                        }
+                    ]
+                }
+            ],
+            "vpcConfig": {
+                "subnets": [],
+                "securityGroups": [],
+                "assignPublicIp": true
+            },
+            "compute": {
+                "simulationUnitLimit": 8,
+                "computeType": "CPU",
+                "gpuUnitLimit": 0
+            }
+        }
+    ]
+}
