@@ -92,9 +92,9 @@ jobs:
             Your image has been successfully uploaded to the remote repository. Please see the details below.
 
             **Tag:** ${{ steps.vars.outputs.IMAGE_TAG }}
-            **URL:** ${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}:${{ steps.vars.outputs.IMAGE_TAG }}
+            **URL:** ${{ steps.login-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPOSITORY }}:${{ steps.vars.outputs.IMAGE_TAG }}
             **AWS Respository URL:** [${{ steps.vars.outputs.IMAGE_TAG }}](
-              https://${{ secrets.AWS_REGION}}.console.aws.amazon.com/ecr/repositories/private/${{ steps.configure_aws_credentials.outputs.aws-account-id}}/${{ github.event.repository.name }}/_/image/${{ steps.build_tag_docker_image.outputs.SHA }}/details?region=${{ secrets.AWS_REGION}}
+              https://${{ secrets.AWS_REGION}}.console.aws.amazon.com/ecr/repositories/private/${{ steps.configure_aws_credentials.outputs.aws-account-id}}/${{ secrets.AWS_ECR_REPOSITORY }}/_/image/${{ steps.build_tag_docker_image.outputs.SHA }}/details?region=${{ secrets.AWS_REGION}}
             )
           comment_tag: docker_image_tag
 
