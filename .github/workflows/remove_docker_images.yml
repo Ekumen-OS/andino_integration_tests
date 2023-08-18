@@ -17,6 +17,7 @@ jobs:
   remove_docker_image:
     runs-on: ubuntu-22.04
     name: Remove AWS Robomaker resources
+    timeout-minutes: 1
 
     steps:
       - name: Checkout
