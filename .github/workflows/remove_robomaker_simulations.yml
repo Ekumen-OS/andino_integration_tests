@@ -6,6 +6,8 @@ on:
     secrets:
       AWS_ACCESS_KEY:
         required: true
+      AWS_ECR_REPOSITORY:
+        required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
       AWS_REGION:
@@ -35,7 +37,7 @@ jobs:
 
       - name: Delete Robot, simulation, and simulation of Amazon Robomaker
         env:
-          ROBOT_APPLICATION_ID: ${{ github.event.repository.name }}-PR-${{ github.event.number }}
-          SIMULATION_APPLICATION_ID: ${{ github.event.repository.name }}-PR-${{ github.event.number }}
+          ROBOT_APPLICATION_ID: ${{ secrets.AWS_ECR_REPOSITORY }}-PR-${{ github.event.number }}
+          SIMULATION_APPLICATION_ID: ${{ secrets.AWS_ECR_REPOSITORY }}-PR-${{ github.event.number }}
         run: |
           python3 ekumen_cloud_robotics_ci/scripts/delete_simulation_job.py $ROBOT_APPLICATION_ID $SIMULATION_APPLICATION_ID
