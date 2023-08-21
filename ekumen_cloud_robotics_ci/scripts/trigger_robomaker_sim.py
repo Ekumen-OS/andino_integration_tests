@@ -38,9 +38,9 @@ from process_simulation_results import main as process_simulation_results
 
 
 def create_robot_application(
-    name, docker_image_url, client_robomaker: boto3.Session
+    name, docker_image_url, simulation_client: boto3.Session
 ) -> str:
-    robot_application_response = client_robomaker.create_robot_application(
+    robot_application_response = simulation_client.create_robot_application(
         name=name,
         robotSoftwareSuite={"name": "General"},
         environment={"uri": docker_image_url},
@@ -49,9 +49,9 @@ def create_robot_application(
 
 
 def create_simulation_application(
-    name, docker_image_url, client_robomaker: boto3.Session
+    name, docker_image_url, simulation_client: boto3.Session
 ) -> str:
-    simulation_application_response = client_robomaker.create_simulation_application(
+    simulation_application_response = simulation_client.create_simulation_application(
         name=name,
         simulationSoftwareSuite={"name": "SimulationRuntime"},
         robotSoftwareSuite={"name": "General"},
@@ -93,8 +93,8 @@ def read_test_descriptions(test_descriptions_file: str) -> list[dict]:
     return json_config_test
 
 
-def trigger_simulation_job(test_descriptions: dict, client_robomaker: boto3.Session):
-    response = client_robomaker.start_simulation_job_batch(
+def trigger_simulation_job(test_descriptions: dict, simulation_client: boto3.Session):
+    response = simulation_client.start_simulation_job_batch(
         batchPolicy={"timeoutInSeconds": 120 * 60, "maxConcurrency": 2},
         createSimulationJobRequests=test_descriptions,
     )
@@ -102,10 +102,10 @@ def trigger_simulation_job(test_descriptions: dict, client_robomaker: boto3.Sess
 
 
 def wait_until_simulation_job_is_finished(
-    simulation_job_arn: str, client_robomaker: boto3.Session, time_step_sec: int = 10
+    simulation_job_arn: str, simulation_client: boto3.Session, time_step_sec: int = 10
 ):
     def query_simulation_job():
-        response = client_robomaker.describe_simulation_job_batch(
+        response = simulation_client.describe_simulation_job_batch(
             batch=simulation_job_arn
         )
         return response["status"]
@@ -117,19 +117,19 @@ def wait_until_simulation_job_is_finished(
         print(f"Simulation job batch status {simulation_job_status}")
 
 
-def main(args: argparse.Namespace, client_robomaker: boto3.Session):
+def main(args: argparse.Namespace, simulation_client: boto3.Session):
     print(f"Creating robot application with {args.robot_image_url}")
     robot_application_arn = create_robot_application(
         name=args.robot_application_name,
         docker_image_url=args.robot_image_url,
-        client_robomaker=client_robomaker,
+        simulation_client=simulation_client,
     )
 
     print(f"Creating simulation application with {args.simulation_image_url}")
     simulation_application_arn = create_simulation_application(
         name=args.simulation_application_name,
         docker_image_url=args.simulation_image_url,
-        client_robomaker=client_robomaker,
+        simulation_client=simulation_client,
     )
 
     test_descriptions = read_test_descriptions(args.test_description_path)
@@ -152,17 +152,17 @@ def main(args: argparse.Namespace, client_robomaker: boto3.Session):
 
     print(f"Triggering simulation job batch")
     simulation_job_arn = trigger_simulation_job(
-        test_descriptions=test_descriptions, client_robomaker=client_robomaker
+        test_descriptions=test_descriptions, simulation_client=simulation_client
     )
 
     print(f"Querying the status of a simulation jobs {simulation_job_arn}")
-    wait_until_simulation_job_is_finished(simulation_job_arn, client_robomaker)
+    wait_until_simulation_job_is_finished(simulation_job_arn, simulation_client)
 
     process_simulation_results(
         simulation_job_arn=simulation_job_arn,
-        region=client_robomaker.meta.region_name,
+        region=simulation_client.meta.region_name,
         simulation_summary_path=args.simulation_summary_path,
-        client_robomaker=client_robomaker,
+        simulation_client=simulation_client,
     )
 
 
@@ -201,5 +201,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    client_robomaker = boto3.client("robomaker")
-    main(args, client_robomaker)
+    simulation_client = boto3.client("robomaker")
+    main(args, simulation_client)
