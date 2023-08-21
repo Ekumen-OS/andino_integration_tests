@@ -17,6 +17,7 @@ jobs:
   remove_robomaker_simulation_jobs:
     runs-on: ubuntu-22.04
     name: Remove robomaker simulations jobs
+    timeout-minutes: 1
 
     steps:
       - name: Checkout
