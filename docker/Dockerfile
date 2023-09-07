@@ -87,11 +87,14 @@ RUN echo "short_sha: ${SHORT_SHA}"
 
 RUN pip install vcstool
 
+# Copy dependencies
+COPY docker/requirements.txt .
+
+# Updates
+RUN sudo apt-get update && sudo apt-get install -y $(cat requirements.txt)
+
 # install virtual display driver
-RUN set -x \
-    && sudo apt-get update \
-    && sudo apt-get install libgl1-mesa-glx xvfb -y \
-    && export DISPLAY=:99.0 \
+RUN set -x && export DISPLAY=:99.0 \
     && which Xvfb && Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 3 \
     && set +x
 

@@ -1,1 +1,4 @@
 python3-pip
+ros-humble-rosbag2-storage-mcap
+libgl1-mesa-glx
+xvfb
