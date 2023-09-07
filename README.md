@@ -159,6 +159,6 @@ CONs:
 
 You can follow the instructions to build the required ROS2 workspace in the andino_tests package: [andino_tests](https://github.com/Ekumen-OS/andino_integration_tests/tree/main/andino_tests)
 
-## CI
+## CI 
 
 You will find more information on how the CI pipeline work in the [ekumen_cloud_robotics_ci/README](https://github.com/Ekumen-OS/andino_integration_tests/tree/main/ekumen_cloud_robotics_ci)
