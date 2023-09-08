@@ -107,7 +107,7 @@ RUN vcs import --input /home/$USER/ws/src/andino_integration_tests/vcs_config.ya
 RUN sudo apt update \
     && sudo apt upgrade -y \
     && rosdep update \
-    && rosdep install -i -y --rosdistro humble --from-paths src
+    && rosdep install -i -y -r --rosdistro humble --from-paths src
 
 # Compile the workspace, switch terminals (from default /bin/sh) to properly source the environment.
 SHELL ["/bin/bash", "-c"]
