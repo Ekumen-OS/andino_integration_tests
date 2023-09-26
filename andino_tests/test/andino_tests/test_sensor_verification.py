@@ -160,8 +160,6 @@ class AndinoSensorsInGazeboTest(unittest.TestCase):
 
     def test_sensors_are_reporting(self):
         """Evaluates that sensors are reporting messages."""
-        is_lidar_reporting = self.wait_for_message(
-            LaserScan, self.SCAN_TOPIC, time_to_wait=self.MAX_TOPIC_TIMEOUT)
         is_odom_reporting = self.wait_for_message(
             Odometry, self.ODOM_TOPIC, time_to_wait=self.MAX_TOPIC_TIMEOUT)
         is_joint_states_reporting = self.wait_for_message(
@@ -169,7 +167,7 @@ class AndinoSensorsInGazeboTest(unittest.TestCase):
         is_camera_reporting = self.wait_for_message(
             Image, self.CAMERA_TOPIC, time_to_wait=self.MAX_TOPIC_TIMEOUT)
 
-        self.assertTrue(is_lidar_reporting, 'Lidar topic has not been received.')
+        self.assertTrue(False, 'Lidar topic has not been received.')
         self.assertTrue(is_odom_reporting, 'Odom topic has not been received.')
         self.assertTrue(is_joint_states_reporting, 'Joint states topic has not been received.')
         self.assertTrue(is_camera_reporting, 'Camera topic has not been received.')
