@@ -73,7 +73,7 @@ def generate_test_description():
     andino_empty_world_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('andino_gazebo'),
+                get_package_share_directory('andino_gz_classic'),
                 'launch',
                 'andino_one_robot.launch.py')
         ),
